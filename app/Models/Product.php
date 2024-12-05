@@ -9,14 +9,15 @@ class Product extends Model
 {
     private static $product, $image, $imageName, $imageUrl, $directory;
 
-    public static function addNewProduct($request)
+    public static function addProduct($request)
     {
-        self::$image = $request->file('image');
-        self::$imageName = time() . '_' . Str::uuid() . '_' . self::$image->getClientOriginalName();
-        self::$directory = 'uploads/product-images/';
-        self::$image->move(self::$directory, self::$imageName);
-        self::$imageUrl = self::$directory . self::$imageName;
-
+        if ($request->file('image')) {
+            self::$image = $request->file('image');
+            self::$imageName = time() . '-' . Str::uuid() . '.' . self::$image->getClientOriginalExtension();
+            self::$directory = 'uploads/product-images/';
+            self::$image->move(self::$directory, self::$imageName);
+            self::$imageUrl = self::$directory . self::$imageName;
+        }
         self::$product = new Product();
         self::$product->name = $request->name;
         self::$product->description = $request->description;
@@ -25,15 +26,16 @@ class Product extends Model
         self::$product->save();
     }
 
-    public static function updateProduct($request, $id)
+    public static function updateProduct($request, $product)
     {
-        self::$product = Product::find($id);
+        self::$product = $product;
+
         if ($request->file('image')) {
             if (self::$product->image) {
                 unlink(self::$product->image);
             }
             self::$image = $request->file('image');
-            self::$imageName = time() . '_' . Str::uuid() . '_' . self::$image->getClientOriginalName();
+            self::$imageName = time() . '-' . Str::uuid() . '.' . self::$image->getClientOriginalExtension();
             self::$directory = 'uploads/product-images/';
             self::$image->move(self::$directory, self::$imageName);
             self::$imageUrl = self::$directory . self::$imageName;
@@ -48,10 +50,15 @@ class Product extends Model
         self::$product->save();
     }
 
-    public static function deleteProduct($id)
+    public static function deleteProduct($product)
     {
-        self::$product = Product::find($id);
-        unlink(self::$product->image);
+        self::$product = $product;
+
+        // Check if image is not null and file exists before unlinking
+        if (self::$product->image && file_exists(public_path(self::$product->image))) {
+            unlink(self::$product->image);
+        }
+
         self::$product->delete();
     }
 }

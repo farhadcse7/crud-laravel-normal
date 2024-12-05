@@ -1,10 +1,10 @@
-@extends('master')
+@extends('layouts.app')
 
 @section('title')
     View Page
 @endsection
 
-@section('main')
+@section('content')
 
     <h2 class="mb-4">View Product</h2>
     <a href="{{ route('products.index') }}" class="btn btn-secondary mb-3">Back to Product List</a>

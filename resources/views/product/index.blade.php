@@ -1,19 +1,20 @@
-@extends('master')
+@extends('layouts.app')
 
 @section('title')
     index Page
 @endsection
 
-@section('main')
+@section('content')
 
     <h2 class="mb-4">Product List</h2>
     <!-- Add Product -->
     <a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Add Product</a>
+
     <div class="row mb-4">
         <!-- Search Bar -->
         <div class="col-md-6 col-lg-4">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search by ID or description" />
+                <input type="text" class="form-control" placeholder="Search here" />
                 <button class="btn btn-primary">Search</button>
             </div>
         </div>
@@ -26,6 +27,7 @@
             </select>
         </div>
     </div>
+
     <!-- Display the success message -->
     @if (session('message'))
         <div class="alert alert-success alert-dismissible fade show w-75" role="alert">
@@ -59,12 +61,11 @@
                                 <img src="{{ asset($product->image) }}" alt="Product Image" class="img-thumbnail" style="width: 50px; height:50px" />
                             </td>
                             <td>
-                                <a href="{{ route('products.show', ['id' => $product->id]) }}" class="btn btn-info btn-sm text-white">View</a>
-                                <a href="{{ route('products.edit', ['id' => $product->id]) }}" class="btn btn-warning btn-sm text-white">Edit</a>
-                                {{-- <a href="{{ route('products.destroy', ['id'=>$product->id]) }}" class="btn btn-danger btn-sm">Delete</a> --}}
-                                <form action="{{ route('products.destroy', ['id' => $product->id]) }}" method="POST" class="d-inline-block">
+                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-info btn-sm text-white">View</a>
+                                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning btn-sm text-white">Edit</a>
+                                <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="d-inline-block">
                                     @csrf
-                                    @method('delete')
+                                    @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to delete this?')">Delete</button>
                                 </form>
                             </td>
@@ -76,5 +77,5 @@
             <p class="text-center text-muted">No products available.</p>
         @endif
     </div>
-    
+
 @endsection
