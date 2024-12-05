@@ -36,12 +36,12 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return view('product.view', ['product' => $product]);
+        return view('product.view', compact('product'));
     }
 
     public function edit(Product $product)
     {
-        return view('product.edit', ['product' => $product]);
+        return view('product.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
@@ -61,7 +61,13 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        Product::deleteProduct($product);
+
+        // Check if image is not null and file exists before unlinking
+        if ($product->image && file_exists($product->image)) {
+            unlink($product->image);
+        }
+
+        $product->delete();
         return redirect()->route('products.index')->with('message', 'Product information deleted successfully');
     }
 }
