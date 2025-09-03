@@ -51,18 +51,21 @@ class ProductController extends Controller
         return back()->with('message', 'New Product information added successfully');
     }
 
-    public function show(Product $product)
+    public function show($id)
     {
+        $product = Product::findOrFail($id);
         return view('product.view', compact('product'));
     }
 
-    public function edit(Product $product)
+    public function edit($id)
     {
+        $product = Product::findOrFail($id);
         return view('product.edit', compact('product'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
+        $product = Product::findOrFail($id);
         $request->validate(
             [
                 'name'        => 'required|unique:products,name,' . $product->id,
@@ -98,8 +101,9 @@ class ProductController extends Controller
         return back()->with('message', 'Product information updated successfully');
     }
 
-    public function destroy(Product $product)
+    public function destroy($id)
     {
+        $product = Product::findOrFail($id);
         // Check if image is not null and file exists before unlinking
         if ($product->image && file_exists($product->image)) {
             unlink($product->image);
